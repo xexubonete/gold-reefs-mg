@@ -17,111 +17,259 @@
         body {
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
-            background-color: #000;
+            background-color: #0a0a0a;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
         }
         /* Nueva fuente para los títulos */
         .font-serif {
             font-family: 'Playfair Display', serif;
         }
-        /* Color de la barra de scroll para que combine con el diseño oscuro */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #a39171; /* Un tono dorado/bronce más sutil */
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #bfa986;
-        }
-        /* Clase para el color de acento principal (bronce/champán) */
-        .accent-color {
-            color: #DCCA87;
-        }
-        /* Clase para el borde de acento */
-        .accent-border {
-            border-color: #DCCA87;
-        }
+        /* Color de la barra de scroll */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #a39171; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bfa986; }
+        
+        /* Colores de acento */
+        .accent-color { color: #DCCA87; }
+        .accent-border { border-color: #DCCA87; }
+        .accent-bg { background-color: #DCCA87; }
+
         /* Estilos para el Modal */
-        .modal-hidden {
-            display: none;
-        }
-        .modal-backdrop {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        .modal-enter {
-            opacity: 0;
-        }
-        .modal-enter .modal-content {
-            opacity: 0;
-            transform: scale(0.95);
-        }
+        .modal-backdrop { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease, opacity 0.3s ease; }
+        
         /* Estilos para las pestañas del modal */
-        .tab-btn {
-            transition: all 0.2s ease-in-out;
-        }
-        .tab-btn.active {
-            color: #DCCA87;
-            border-bottom-color: #DCCA87;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        #lightbox-img {
-            transition: transform 0.2s ease;
-        }
+        .tab-btn { transition: all 0.2s ease-in-out; }
+        .tab-btn.active { color: #DCCA87; border-bottom-color: #DCCA87; }
+        .tab-content { display: none; transition: opacity 0.4s ease-in-out; opacity: 0; }
+        .tab-content.active { display: block; opacity: 1; }
+
+        #lightbox-img { transition: transform 0.2s ease; }
+
         /* Estilos para el toggle de vistas de proyecto */
-        .view-toggle-btn {
-            transition: all 0.2s ease-in-out;
-            border: 1px solid #404040;
+        .view-toggle-btn { transition: all 0.2s ease-in-out; border: 1px solid #404040; }
+        .view-toggle-btn.active { background-color: rgba(220, 202, 135, 0.1); border-color: #DCCA87; color: #DCCA87; }
+
+        /* Estilo para la imagen del proyecto con hover */
+        .project-image-container {
+            border: 2px solid transparent;
+            transition: border 0.4s ease-out;
         }
-        .view-toggle-btn.active {
-            background-color: rgba(220, 202, 135, 0.1);
-            border-color: #DCCA87;
-            color: #DCCA87;
+        .project-image-container img { transition: transform 0.4s ease-out, box-shadow 0.4s ease-out; }
+        .project-image-container:hover {
+            border-color: rgba(220, 202, 135, 0.5);
         }
-        /* Animaciones de scroll */
-        .scroll-reveal {
+        .project-image-container:hover img { 
+            transform: scale(1.03);
+            box-shadow: 0 25px 50px -12px rgba(220, 202, 135, 0.15);
+        }
+
+        /* Efecto Glow en hover para títulos e iconos */
+        .glow-hover { transition: text-shadow 0.3s ease; }
+        .glow-hover:hover { text-shadow: 0 0 15px rgba(220, 202, 135, 0.7); }
+        
+        .feature-item svg {
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        .feature-item:hover svg {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 5px rgba(220, 202, 135, 0.8));
+        }
+        
+        /* Animación de brillo deslizante para botones */
+        .shiny-hover {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .shiny-hover > * {
+            position: relative;
+            z-index: 2;
+        }
+        .shiny-hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            transform: skewX(-25deg);
+            transition: left 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 1;
+        }
+        .shiny-hover:hover::after {
+            left: 150%;
+        }
+        .shiny-gold::after {
+            background: linear-gradient(to right, rgba(220, 202, 135, 0) 0%, rgba(220, 202, 135, 0.8) 50%, rgba(220, 202, 135, 0) 100%);
+        }
+        .shiny-red::after {
+            background: linear-gradient(to right, rgba(255, 80, 80, 0) 0%, rgba(255, 80, 80, 0.9) 50%, rgba(255, 80, 80, 0) 100%);
+        }
+        .shiny-blue::after {
+            background: linear-gradient(to right, rgba(173, 216, 230, 0) 0%, rgba(173, 216, 230, 0.9) 50%, rgba(173, 216, 230, 0) 100%);
+        }
+
+        /* Animaciones de entrada escalonadas */
+        .scroll-reveal .reveal-child {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
-        .scroll-reveal.visible {
+        .scroll-reveal.visible .reveal-child {
             opacity: 1;
             transform: translateY(0);
+        }
+        .scroll-reveal.visible .reveal-child:nth-child(1) { transition-delay: 0.1s; }
+        .scroll-reveal.visible .reveal-child:nth-child(2) { transition-delay: 0.2s; }
+        .scroll-reveal.visible .reveal-child:nth-child(3) { transition-delay: 0.3s; }
+        .scroll-reveal.visible .reveal-child:nth-child(4) { transition-delay: 0.4s; }
+
+        /* Video de fondo */
+        #video-bg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        #video-bg-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+        }
+        #video-player {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translateX(-50%) translateY(-50%);
+            object-fit: cover;
+            transition: transform 0.1s linear;
+        }
+
+        /* Botón Volver Arriba */
+        #back-to-top-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 100;
+        }
+        #back-to-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        #back-to-top-btn:hover {
+            transform: scale(1.2);
+        }
+
+        /* Animación de brillo para el logo */
+        .logo-glow {
+            animation: golden-glow 4s ease-in-out infinite, logo-fade-in 1.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes golden-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 8px rgba(220, 202, 135, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 25px rgba(220, 202, 135, 0.9));
+            }
+        }
+        @keyframes logo-fade-in {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Texto con gradiente dorado */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #DCCA87, #FFF, #DCCA87);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
         }
     </style>
 </head>
 <body class="bg-black text-neutral-200">
 
-    <!-- ========== CONTENEDOR PRINCIPAL ========== -->
+    <!-- Título Principal y Logo (Full-width) -->
+    <header class="min-h-screen flex flex-col items-center justify-center text-center p-4 relative">
+        <div id="video-bg-container">
+            <video id="video-player" playsinline autoplay muted loop src="https://i.imgur.com/HDHJQQx.mp4"></video>
+        </div>
+        <div class="relative z-10">
+            <img src="https://i.imgur.com/8cF34Mv.png" alt="Logo" class="mx-auto h-48 md:h-64 w-auto logo-glow">
+        </div>
+    </header>
+
+    <!-- ========== CONTENEDOR PRINCIPAL (Contenido Centrado) ========== -->
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12">
 
-        <!-- Título Principal y Logo -->
-        <header class="min-h-screen flex flex-col items-center justify-center text-center p-4 relative">
-            <div class="relative z-10">
-                <img src="https://i.imgur.com/8cF34Mv.png" alt="Logo" class="mx-auto h-48 md:h-64 w-auto">
+        <!-- ========== SECCIÓN NUESTRA FILOSOFÍA ========== -->
+        <section id="filosofia" class="py-24 text-center scroll-reveal">
+            <div class="reveal-child">
+                <h2 class="text-5xl font-serif font-bold tracking-tight glow-hover text-gradient-gold">Nuestra Filosofía</h2>
             </div>
-            <div class="absolute bottom-10 animate-bounce z-10">
-                <a href="#proyecto1" aria-label="Ir al primer proyecto">
-                    <i data-lucide="arrow-down" class="h-8 w-8 accent-color"></i>
-                </a>
+            <div class="reveal-child">
+                <p class="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto font-light">
+                    Creemos en la creación de valor a través de propiedades excepcionales. Nuestro compromiso es con la calidad, la ubicación estratégica y un diseño que perdura en el tiempo, garantizando no solo un hogar de lujo, sino una inversión inteligente para su futuro.
+                </p>
             </div>
-        </header>
+        </section>
 
         <!-- Los proyectos se generarán dinámicamente aquí -->
         <main id="projects-container"></main>
+
+        <!-- ========== SECCIÓN DE CONTACTO ========== -->
+        <section id="contacto" class="py-24 text-center scroll-reveal">
+            <div class="reveal-child">
+                <h2 class="text-5xl font-serif font-bold tracking-tight glow-hover text-gradient-gold">¿Interesado en Invertir?</h2>
+            </div>
+            <div class="reveal-child">
+                <p class="mt-4 text-lg text-neutral-300 max-w-2xl mx-auto">Contáctenos para recibir asesoría personalizada y dar el siguiente paso hacia la propiedad de sus sueños.</p>
+            </div>
+            <div class="mt-8 reveal-child">
+                <a href="mailto:info@goldreef.com" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-black accent-bg hover:opacity-90 transition-all shadow-lg shadow-amber-900/30 hover:shadow-xl hover:shadow-amber-800/40">
+                    <i data-lucide="mail" class="mr-3 h-5 w-5"></i> Agendar una Cita
+                </a>
+            </div>
+        </section>
         
     </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-neutral-900 border-t border-neutral-800">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-neutral-400 text-sm">
+            <p>&copy; 2024 Gold Reef. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ========== BOTÓN VOLVER ARRIBA ========== -->
+    <button id="back-to-top-btn" class="p-2 text-amber-300/70 hover:text-amber-300">
+        <span><i data-lucide="arrow-up" class="h-8 w-8"></i></span>
+    </button>
+
 
     <!-- ====================================================== -->
     <!-- ========== MODALS ========== -->
@@ -215,13 +363,19 @@
                     id: '1',
                     title: 'Gold Reef I',
                     mainImage: 'https://i.imgur.com/GO08Z63.jpeg',
-                    description: 'Gold Reef Apartments I es un complejo de apartamentos en Villas Bávaro, Punta Cana, ubicado estratégicamente a 15 minutos del Aeropuerto Internacional de Punta Cana.',
+                    description: 'Gold Reef Apartments I es un complejo en Villas Bávaro, Punta Cana, ubicado estratégicamente a 15 minutos del Aeropuerto Internacional de Punta Cana.',
                     videoSrc: 'https://www.youtube.com/embed/yR8P6PMMe8g',
                     brochureLink: 'https://drive.google.com/file/d/1KfNvi9xZUK6vB_oX_32Szs3G23MOvlE3/view?usp=drive_link',
+                    keyFeatures: [
+                        { icon: 'bed-double', text: '2 Habitaciones' },
+                        { icon: 'bath', text: '2 Baños' },
+                        { icon: 'car', text: 'Parking Subterráneo' },
+                        { icon: 'umbrella', text: 'Acceso a Playa Privada' },
+                    ],
                     fichaTecnica: [
                         { label: 'Ubicación', value: 'Bavaro, Punta Cana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3592.926298901062!2d-68.4188333!3d18.666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDM5JzU3LjYiTiA2OMKwMjUnMDcuOCJX!5e1!3m2!1ses!2sus!4v1756397699167!5m2!1ses!2sus' },
-                        { label: 'Tipo de Propiedad', value: 'Apartamentos de 2 hab, 2 baños' },
-                        { label: 'Transporte a la playa', value: 'A 2 minutos en carrito de golf' },
+                        { label: 'Tipo', value: 'Apartamentos' },
+                        { label: 'Playa', value: 'A 2 min (carrito de golf)' },
                         { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
                     ]
                 },
@@ -229,13 +383,19 @@
                     id: '2',
                     title: 'Gold Reef Village',
                     mainImage: 'https://i.imgur.com/KpxAnux.jpeg',
-                    description: 'CONDO-HOTEL con un diseño arquitectónico de vanguardia, diseñado en forma de "U" y rodeado de vegetación tropical exuberante y playas de arena blanca.',
+                    description: 'CONDO-HOTEL con un diseño arquitectónico de vanguardia, rodeado de vegetación tropical exuberante y playas de arena blanca.',
                     videoSrc: 'https://www.youtube.com/embed/BHhA5x4GSAE',
                     brochureLink: 'https://drive.google.com/file/d/15AcxoEjqk-wQ_PJfolQTW4NjYVGnyCSI/view?usp=drive_link',
+                    keyFeatures: [
+                        { icon: 'building-2', text: 'Formato Condo-Hotel' },
+                        { icon: 'swimming-pool', text: '8 Piscinas Lineales' },
+                        { icon: 'shield-check', text: 'Beneficios CONFOTUR' },
+                        { icon: 'golf-course', text: 'Cancha de Pádel y Minigolf' },
+                    ],
                     fichaTecnica: [
                         { label: 'Ubicación', value: 'Villas Bávaro, Cortecito', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3592.962780626781!2d-68.4250833!3d18.6642778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDM5JzUxLjQiTiA2OMKwMjUnMzAuMyJX!5e1!3m2!1ses!2sus!4v1756398852133!5m2!1ses!2sus' },
-                        { label: 'Tipo de Propiedad', value: 'Apartamentos de 2 hab.' },
-                        { label: 'Transporte a la playa', value: 'A 5 minutos en carrito de golf' },
+                        { label: 'Tipo', value: 'Apartamentos' },
+                        { label: 'Playa', value: 'A 5 min (carrito de golf)' },
                         { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
                     ]
                 },
@@ -243,13 +403,19 @@
                     id: '3',
                     title: 'Gold Reef City',
                     mainImage: 'https://i.imgur.com/PlT4kxZ.jpeg',
-                    description: 'Un innovador proyecto de 379 unidades que incluye villas, townhouses y apartamentos, con una plaza comercial y amenidades de primer nivel.',
+                    description: 'Innovador proyecto de 379 unidades que incluye villas, townhouses y apartamentos, con plaza comercial y amenidades de primer nivel.',
                     videoSrc: 'https://www.youtube.com/embed/O4S5kjwokC4',
                     brochureLink: 'https://drive.google.com/file/d/1zqo870ouIofE0DMgFwmHoroGXYvV3d79/view?usp=drive_link',
+                    keyFeatures: [
+                        { icon: 'home', text: 'Villas y Apartamentos' },
+                        { icon: 'shopping-cart', text: 'Plaza Comercial' },
+                        { icon: 'swimming-pool', text: 'Piscina Olímpica' },
+                        { icon: 'bike', text: 'Ciclovía' },
+                    ],
                     fichaTecnica: [
                         { label: 'Ubicación', value: 'Bávaro, Punta Cana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3592.770330578363!2d-68.4553056!3d18.673361099999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDQwJzI0LjEiTiA2OMKwMjcnMTkuMSJX!5e1!3m2!1ses!2sus!4v1756400856840!5m2!1ses!2sus' },
-                        { label: 'Tipo de Propiedad', value: 'Villas, Townhouses, Apartamentos' },
-                        { label: 'Transporte a la playa', value: '8-10min en minibus' },
+                        { label: 'Tipo', value: 'Mixto (Villas, Aptos)' },
+                        { label: 'Playa', value: '8-10 min (minibus)' },
                         { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
                     ]
                 },
@@ -260,9 +426,15 @@
                     description: 'Complejo de 48 apartamentos de 2 habitaciones, ubicado a solo 8 minutos del Aeropuerto Internacional de Punta Cana.',
                     videoSrc: 'https://www.youtube.com/embed/P5iOJAuWq6A',
                     brochureLink: 'https://drive.google.com/file/d/1E69VPMJNvMt726SxnUQU5cibOs7YRet7/view?usp=drive_link',
+                    keyFeatures: [
+                        { icon: 'plane', text: 'A 8 min del Aeropuerto' },
+                        { icon: 'dumbbell', text: 'Gimnasio Equipado' },
+                        { icon: 'home', text: 'Penthouse Disponibles' },
+                        { icon: 'trees', text: 'Jardines Privados' },
+                    ],
                     fichaTecnica: [
                         { label: 'Ubicación', value: 'Punta Cana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3594.4287883098104!2d-68.3973333!3d18.5949444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDM1JzQxLjgiTiA2OMKwMjMnNTAuNCJX!5e1!3m2!1ses!2sus!4v1756401931023!5m2!1ses!2sus' },
-                        { label: 'Tipo de Propiedad', value: 'Apartamentos de 2 hab, 2 baños' },
+                        { label: 'Tipo', value: 'Apartamentos' },
                         { label: 'Transporte', value: '10 min en mini bus' },
                         { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
                     ]
@@ -278,10 +450,16 @@
                             description: 'Exclusivo proyecto de 56 apartamentos de lujo dentro del macro-complejo Playa Nueva Romana, con acceso a campo de golf PGA y hotel 5 estrellas.',
                             videoSrc: 'https://www.youtube.com/embed/SLDCjxf43uw',
                             brochureLink: 'https://drive.google.com/file/d/1P9TJHorDjmusIhDg0Kqb3zCPe-A17jQs/view?usp=drive_link',
+                             keyFeatures: [
+                                { icon: 'golf-course', text: 'Acceso a Golf PGA' },
+                                { icon: 'star', text: 'Hotel 5 Estrellas' },
+                                { icon: 'shield-check', text: 'Beneficios CONFOTUR' },
+                                { icon: 'gem', text: 'Acabados de Lujo' },
+                            ],
                             fichaTecnica: [
                                 { label: 'Ubicación', value: 'Playa Nueva Romana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3597.6516401149274!2d-69.19344439999999!3d18.441638899999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDI2JzI5LjkiTiA2OcKwMTEnMzYuNCJX!5e1!3m2!1ses!2sus!4v1756402174542!5m2!1ses!2sus' },
-                                { label: 'Tipo de Propiedad', value: 'Apartamentos (1 hab + estudio)' },
-                                { label: 'Transporte a la playa', value: 'A 2 minutos' },
+                                { label: 'Tipo', value: 'Apartamentos' },
+                                { label: 'Playa', value: 'A 2 minutos' },
                                 { label: 'Terminaciones', value: 'Porcelanato Europeo, Silestone' }
                             ]
                         },
@@ -292,11 +470,17 @@
                             description: "Villas de lujo con vista al campo de golf PGA Ocean's 4, ubicadas a pocos metros del Beach Club y del Mar Caribe.",
                             videoSrc: 'https://www.youtube.com/embed/SLDCjxf43uw',
                             brochureLink: 'https://drive.google.com/file/d/1H-jOOCDXfNvcEOiKa5Lr95B0KyK22vcb/view?usp=drive_link',
+                            keyFeatures: [
+                                { icon: 'golf-course', text: "Vista al Campo de Golf" },
+                                { icon: 'home', text: '3 Dormitorios' },
+                                { icon: 'swimming-pool', text: 'Piscina Privada' },
+                                { icon: 'gem', text: 'Línea Blanca Incluida' },
+                            ],
                             fichaTecnica: [
                                 { label: 'Ubicación', value: 'Playa Nueva Romana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3597.6375357361644!2d-69.1847031!3d18.4423125!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eaf591f5092e4e3%3A0x65f5e497731bc307!2sGold%20Reef%20Villas!5e1!3m2!1ses-419!2sus!4v1756402953998!5m2!1ses-419!2sus' },
-                                { label: 'Tipo de Propiedad', value: 'Villas de 3 dormitorios' },
-                                { label: 'Superficie', value: '226 m² const. / Solar 448 m²' },
-                                { label: 'Terminaciones', value: 'Porcelanato, Silestone, Concreto' }
+                                { label: 'Tipo', value: 'Villas' },
+                                { label: 'Superficie', value: '226 m² const.' },
+                                { label: 'Terminaciones', value: 'Porcelanato, Silestone' }
                             ]
                         }
                     ]
@@ -381,10 +565,10 @@
                                     </div>
                                 </div>
                                 <div id="disponibilidad-1" class="tab-content">
-                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNHGfsCaE5KU5YS16w6wHc9qMOKGgPWlQR4Otnx1hNHjYr-2PsABbewEHAYePPuw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNHGfsCaE5KU5YS16w6wHc9qMOKGgPWlQR4Otnx1hNHjYr-2PsABbewEHAYePPuw/pubhtml?widget=true&headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
                                 </div>
                                 <div id="disponibilidad-2" class="tab-content">
-                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRJxv0rCamKRQKNsVhSEjrC6mu1wPFT2k4i49pQRdK1o98eOglWuUVFchrO2jxM3g/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRJxv0rCamKRQKNsVhSEjrC6mu1wPFT2k4i49pQRdK1o98eOglWuUVFchrO2jxM3g/pubhtml?widget=true&headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -477,7 +661,7 @@
                                    </div>
                                 </div>
                                  <div id="disponibilidad" class="tab-content">
-                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRpY4uG2WSXHmNDxMbrSoFxgsNSeRYLnkjUJW5KptzxesXJIp9GBdqg8ngpJN2mfw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRpY4uG2WSXHmNDxMbrSoFxgsNSeRYLnkjUJW5KptzxesXJIp9GBdqg8ngpJN2mfw/pubhtml?widget=true&headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -556,10 +740,10 @@
                                    </div>
                                 </div>
                                 <div id="disponibilidad-apartamentos" class="tab-content">
-                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSch65qTM-O0T1ZvlV4AAH8aqtcOtuxZttr12I8M5b1dYfQpHqfEh4A1QfBRFI_wQ/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSch65qTM-O0T1ZvlV4AAH8aqtcOtuxZttr12I8M5b1dYfQpHqfEh4A1QfBRFI_wQ/pubhtml?widget=true&headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
                                 </div>
                                 <div id="disponibilidad-villas" class="tab-content">
-                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTkwF7tmdgBkwi6ACxbMqI0x-JxYi8bcuuodPP5LUo3I28d1X1lqXWauvK_8r79Kw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTkwF7tmdgBkwi6ACxbMqI0x-JxYi8bcuuodPP5LUo3I28d1X1lqXWauvK_8r79Kw/pubhtml?widget=true&headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -652,7 +836,7 @@
                                    </div>
                                 </div>
                                  <div id="disponibilidad" class="tab-content">
-                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSiZIYYbXXURQxOFOdf2ijJlm7fzRQbWzZzm6BqrmvtgujySHKBgep-9fTY4VY8fw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSiZIYYbXXURQxOFOdf2ijJlm7fzRQbWzZzm6BqrmvtgujySHKBgep-9fTY4VY8fw/pubhtml?widget=true&headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -728,7 +912,7 @@
                                    </div>
                                 </div>
                                 <div id="disponibilidad" class="tab-content">
-                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTEbS9fbfhp2xZjDtBnca-GWgeltAxrVtYTlybxB1-eHdgQmbxzicZUjx1YV4Xfig/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTEbS9fbfhp2xZjDtBnca-GWgeltAxrVtYTlybxB1-eHdgQmbxzicZUjx1YV4Xfig/pubhtml?widget=true&headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -819,29 +1003,41 @@
             // --- SCRIPT ---
             const renderSingleProjectView = (data, projectId) => {
                 return `
-                    <div class="text-center mb-8">
-                        ${!data.name ? `<h2 class="text-5xl font-serif font-bold accent-color tracking-tight">${data.title}</h2>` : ''}
+                    <div class="reveal-child">
+                        <div class="text-center mb-8">
+                            ${!data.name ? `<h2 class="text-5xl font-serif font-bold tracking-tight glow-hover text-gradient-gold">${data.title}</h2>` : ''}
+                        </div>
                     </div>
-                    <div class="mb-10 rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="reveal-child mb-10 rounded-2xl overflow-hidden shadow-2xl project-image-container cursor-pointer" data-lightbox-src="${data.mainImage}">
                         <img src="${data.mainImage}" alt="Visual del Proyecto ${data.title}" class="w-full h-full object-cover">
                     </div>
                     <div class="grid md:grid-cols-5 gap-10">
-                        <div class="md:col-span-2">
-                            <h3 class="text-2xl font-semibold text-white mb-3">Descripción General ${data.name ? `(${data.name})` : ''}</h3>
+                        <div class="md:col-span-2 reveal-child">
+                            <h3 class="text-2xl font-semibold text-white mb-3">${data.name ? `${data.name}` : 'Descripción General'}</h3>
                             <p class="text-neutral-300 font-light leading-relaxed">${data.description}</p>
-                            <div class="mt-6 flex flex-wrap gap-4">
-                                <button class="open-video-btn inline-flex items-center justify-center px-5 py-2.5 border border-neutral-600 hover:bg-neutral-800 text-white font-medium rounded-lg transition-colors" data-video-src="${data.videoSrc}">
-                                    <i data-lucide="play-circle" class="mr-2 h-5 w-5"></i> Ver Video
+                            
+                            <div class="grid grid-cols-2 gap-4 my-6">
+                                ${data.keyFeatures.map(item => `
+                                    <div class="flex items-center feature-item cursor-pointer">
+                                        <i data-lucide="${item.icon}" class="h-5 w-5 accent-color mr-3 flex-shrink-0"></i>
+                                        <span class="text-neutral-200 text-sm">${item.text}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div class="flex flex-wrap gap-4">
+                                <button class="open-video-btn shiny-hover shiny-red flex-1 inline-flex items-center justify-center px-5 py-2.5 border border-neutral-600 hover:border-red-500/50 text-white font-medium rounded-lg" data-video-src="${data.videoSrc}">
+                                    <span><i data-lucide="play-circle" class="mr-2 h-5 w-5"></i> Video</span>
                                 </button>
-                                <button data-project-id="${projectId}" class="open-modal-btn inline-flex items-center justify-center px-5 py-2.5 border border-amber-700/50 bg-amber-900/20 hover:bg-amber-900/40 text-amber-300 font-medium rounded-lg transition-colors">
-                                    <i data-lucide="arrow-right" class="mr-2 h-5 w-5"></i> Ver más detalles
+                                <button data-project-id="${projectId}" class="open-modal-btn shiny-hover shiny-gold flex-1 inline-flex items-center justify-center px-5 py-2.5 border border-amber-700/50 bg-amber-900/20 hover:border-amber-500/50 text-amber-300 font-medium rounded-lg">
+                                    <span><i data-lucide="arrow-right" class="mr-2 h-5 w-5"></i> Detalles</span>
                                 </button>
-                                <button data-brochure-src="${data.brochureLink}" class="open-brochure-btn w-full inline-flex items-center justify-center px-5 py-2.5 border border-neutral-600 hover:bg-neutral-800 text-white font-medium rounded-lg transition-colors">
-                                    <i data-lucide="book-open" class="mr-2 h-5 w-5"></i> Brochure
+                                <button data-brochure-src="${data.brochureLink}" class="open-brochure-btn shiny-hover shiny-blue w-full mt-4 inline-flex items-center justify-center px-5 py-2.5 border border-neutral-600 hover:border-blue-500/50 text-white font-medium rounded-lg">
+                                    <span><i data-lucide="book-open" class="mr-2 h-5 w-5"></i> Brochure</span>
                                 </button>
                             </div>
                         </div>
-                        <div class="md:col-span-3">
+                        <div class="md:col-span-3 reveal-child">
                             <h3 class="text-2xl font-semibold text-white mb-4">Ficha Técnica</h3>
                             <div class="grid grid-cols-2 gap-x-6 gap-y-4">
                                 ${data.fichaTecnica.map(item => `
@@ -864,31 +1060,33 @@
 
             const renderProjects = () => {
                 let html = '';
-                projects.forEach(project => {
+                projects.forEach((project, index) => {
                     if (project.views) {
                         html += `
                             <section id="proyecto${project.id}" class="mb-24 pt-16 scroll-reveal">
-                                <div class="text-center mb-8">
-                                    <h2 class="text-5xl font-serif font-bold accent-color tracking-tight">${project.title}</h2>
-                                    <div class="mt-4 flex justify-center items-center gap-2">
-                                        ${project.views.map((view, index) => `
-                                            <button class="view-toggle-btn ${index === 0 ? 'active' : ''} px-4 py-2 rounded-lg" data-view="${view.id}">${view.name}</button>
-                                        `).join('')}
+                                <div class="reveal-child">
+                                    <div class="text-center mb-8">
+                                        <h2 class="text-5xl font-serif font-bold tracking-tight glow-hover text-gradient-gold">${project.title}</h2>
+                                        <div class="mt-4 inline-flex justify-center items-center gap-2 p-1 bg-neutral-900 rounded-lg">
+                                            ${project.views.map((view, viewIndex) => `
+                                                <button class="view-toggle-btn ${viewIndex === 0 ? 'active' : ''} px-4 py-2 rounded-md" data-view="${view.id}">${view.name}</button>
+                                            `).join('')}
+                                        </div>
                                     </div>
                                 </div>
-                                ${project.views.map((view, index) => `
-                                    <div id="${view.id}-view" style="${index > 0 ? 'display: none;' : ''}">
+                                ${project.views.map((view, viewIndex) => `
+                                    <div id="${view.id}-view" style="${viewIndex > 0 ? 'display: none;' : ''}">
                                         ${renderSingleProjectView(view, view.id.includes('villas') ? '5-villas' : '5')}
                                     </div>
                                 `).join('')}
-                                <hr class="border-neutral-800 mt-24">
+                                ${index < projects.length - 1 ? '<hr class="border-neutral-800 mt-24">' : ''}
                             </section>
                         `;
                     } else {
                         html += `
                             <section id="proyecto${project.id}" class="mb-24 pt-16 scroll-reveal">
                                 ${renderSingleProjectView(project, project.id)}
-                                <hr class="border-neutral-800 mt-24">
+                                ${index < projects.length - 1 ? '<hr class="border-neutral-800 mt-24">' : ''}
                             </section>
                         `;
                     }
@@ -1033,8 +1231,8 @@
                 if (index < 0 || index >= currentGalleryImages.length) return;
                 currentImageIndex = index;
                 lightboxImg.src = currentGalleryImages[currentImageIndex];
-                prevLightboxBtn.style.display = currentImageIndex === 0 ? 'none' : 'block';
-                nextLightboxBtn.style.display = currentImageIndex === currentGalleryImages.length - 1 ? 'none' : 'block';
+                prevLightboxBtn.style.display = currentGalleryImages.length > 1 && currentImageIndex > 0 ? 'block' : 'none';
+                nextLightboxBtn.style.display = currentGalleryImages.length > 1 && currentImageIndex < currentGalleryImages.length - 1 ? 'block' : 'none';
             };
 
             const openLightbox = (images, index) => {
@@ -1095,22 +1293,49 @@
                         v.style.display = v.id.startsWith(view) ? 'block' : 'none';
                     });
                 }
+                
+                const mainImageLightbox = e.target.closest('[data-lightbox-src]');
+                if (mainImageLightbox) {
+                    const src = mainImageLightbox.dataset.lightboxSrc;
+                    openLightbox([src], 0);
+                }
             });
 
             closeProjectModalBtn.addEventListener('click', closeProjectModal);
             projectBackdrop.addEventListener('click', closeProjectModal);
             
-            // Animaciones de scroll
+            // Animaciones de scroll y Parallax
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
                     }
                 });
-            }, { threshold: 0.1 });
+            }, { threshold: 0.2 });
 
             document.querySelectorAll('.scroll-reveal').forEach(el => {
                 observer.observe(el);
+            });
+
+            const backToTopBtn = document.getElementById('back-to-top-btn');
+            const videoPlayer = document.getElementById('video-player');
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+
+                // Botón de volver arriba
+                if (scrollY > 400) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+
+                // Efecto Parallax del video
+                if (videoPlayer && scrollY < window.innerHeight) {
+                    videoPlayer.style.transform = `translateX(-50%) translateY(-50%) translateY(${scrollY * 0.3}px)`;
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
             lucide.createIcons();
@@ -1118,4 +1343,4 @@
     </script>
 
 </body>
-</html>
+</html"
