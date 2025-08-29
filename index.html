@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación de Proyectos Inmobiliarios</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Iconos (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Estilo base para la fuente y el scroll suave */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #000;
+        }
+        /* Nueva fuente para los títulos */
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Color de la barra de scroll para que combine con el diseño oscuro */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a39171; /* Un tono dorado/bronce más sutil */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bfa986;
+        }
+        /* Clase para el color de acento principal (bronce/champán) */
+        .accent-color {
+            color: #DCCA87;
+        }
+        /* Clase para el borde de acento */
+        .accent-border {
+            border-color: #DCCA87;
+        }
+        /* Estilos para el Modal */
+        .modal-hidden {
+            display: none;
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .modal-enter {
+            opacity: 0;
+        }
+        .modal-enter .modal-content {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        /* Estilos para las pestañas del modal */
+        .tab-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-btn.active {
+            color: #DCCA87;
+            border-bottom-color: #DCCA87;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #lightbox-img {
+            transition: transform 0.2s ease;
+        }
+        /* Estilos para el toggle de vistas de proyecto */
+        .view-toggle-btn {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #404040;
+        }
+        .view-toggle-btn.active {
+            background-color: rgba(220, 202, 135, 0.1);
+            border-color: #DCCA87;
+            color: #DCCA87;
+        }
+        /* Animaciones de scroll */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-black text-neutral-200">
+
+    <!-- ========== CONTENEDOR PRINCIPAL ========== -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12">
+
+        <!-- Título Principal y Logo -->
+        <header class="min-h-screen flex flex-col items-center justify-center text-center p-4 relative">
+            <div class="relative z-10">
+                <img src="https://i.imgur.com/8cF34Mv.png" alt="Logo" class="mx-auto h-48 md:h-64 w-auto">
+            </div>
+            <div class="absolute bottom-10 animate-bounce z-10">
+                <a href="#proyecto1" aria-label="Ir al primer proyecto">
+                    <i data-lucide="arrow-down" class="h-8 w-8 accent-color"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Los proyectos se generarán dinámicamente aquí -->
+        <main id="projects-container"></main>
+        
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- ========== MODALS ========== -->
+    <!-- ====================================================== -->
+
+    <!-- MODAL FICHA DETALLADA -->
+    <div id="project-modal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-content relative w-full max-w-6xl max-h-[90vh] bg-neutral-900 border border-neutral-700 rounded-2xl shadow-2xl flex flex-col">
+            <div class="flex-shrink-0 px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
+                <h3 id="modal-title" class="text-2xl font-serif font-bold accent-color">Detalles del Proyecto</h3>
+                <button id="close-modal-btn" class="text-neutral-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="h-7 w-7"></i>
+                </button>
+            </div>
+            <div id="modal-body" class="flex-1 p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+    
+    <!-- MODAL MAPA -->
+    <div id="map-modal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-content relative w-full max-w-4xl h-[80vh] bg-neutral-900 border border-neutral-700 rounded-2xl shadow-2xl flex flex-col">
+             <div class="flex-shrink-0 px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
+                <h3 class="text-2xl font-serif font-bold accent-color">Ubicación del Proyecto</h3>
+                <button id="close-map-modal-btn" class="text-neutral-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="h-7 w-7"></i>
+                </button>
+            </div>
+            <div class="w-full h-full p-1">
+                 <iframe id="map-iframe" class="w-full h-full rounded-b-lg" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL VIDEO -->
+    <div id="video-modal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-content relative w-full max-w-4xl bg-black border border-neutral-700 rounded-2xl shadow-2xl flex flex-col aspect-video">
+            <button id="close-video-modal-btn" class="absolute -top-3 -right-3 text-neutral-400 bg-neutral-900 rounded-full p-1 hover:text-white transition-colors z-10">
+                <i data-lucide="x" class="h-7 w-7"></i>
+            </button>
+            <iframe id="video-iframe" class="w-full h-full rounded-2xl" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- MODAL BROCHURE -->
+    <div id="brochure-modal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-content relative w-full max-w-6xl h-[90vh] bg-neutral-900 border border-neutral-700 rounded-2xl shadow-2xl flex flex-col">
+             <div class="flex-shrink-0 px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
+                <h3 class="text-2xl font-serif font-bold accent-color">Brochure del Proyecto</h3>
+                <button id="close-brochure-modal-btn" class="text-neutral-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="h-7 w-7"></i>
+                </button>
+            </div>
+            <div class="w-full h-full p-1">
+                 <iframe id="brochure-iframe" class="w-full h-full rounded-b-lg" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LIGHTBOX (GALERÍA) -->
+    <div id="lightbox-modal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-black/90 backdrop-blur-sm"></div>
+        <div class="modal-content relative w-full h-full flex items-center justify-center">
+            <button id="close-lightbox-btn" class="absolute top-4 right-4 text-neutral-400 hover:text-white transition-colors z-20">
+                <i data-lucide="x" class="h-10 w-10"></i>
+            </button>
+            <button id="prev-lightbox-btn" class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors z-20 p-2 bg-black/20 rounded-full">
+                <i data-lucide="chevron-left" class="h-10 w-10"></i>
+            </button>
+            <button id="next-lightbox-btn" class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors z-20 p-2 bg-black/20 rounded-full">
+                <i data-lucide="chevron-right" class="h-10 w-10"></i>
+            </button>
+            <div class="relative max-w-5xl max-h-[90vh] flex items-center justify-center">
+                <img id="lightbox-img" src="" alt="Vista ampliada del proyecto" class="max-w-full max-h-full object-contain rounded-lg">
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const projectsContainer = document.getElementById('projects-container');
+            if (!projectsContainer) return;
+
+            // --- DATA ---
+            const projects = [
+                {
+                    id: '1',
+                    title: 'Gold Reef I',
+                    mainImage: 'https://i.imgur.com/GO08Z63.jpeg',
+                    description: 'Gold Reef Apartments I es un complejo de apartamentos en Villas Bávaro, Punta Cana, ubicado estratégicamente a 15 minutos del Aeropuerto Internacional de Punta Cana.',
+                    videoSrc: 'https://www.youtube.com/embed/yR8P6PMMe8g',
+                    brochureLink: 'https://drive.google.com/file/d/1KfNvi9xZUK6vB_oX_32Szs3G23MOvlE3/view?usp=drive_link',
+                    fichaTecnica: [
+                        { label: 'Ubicación', value: 'Bavaro, Punta Cana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3592.926298901062!2d-68.4188333!3d18.666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDM5JzU3LjYiTiA2OMKwMjUnMDcuOCJX!5e1!3m2!1ses!2sus!4v1756397699167!5m2!1ses!2sus' },
+                        { label: 'Tipo de Propiedad', value: 'Apartamentos de 2 hab, 2 baños' },
+                        { label: 'Transporte a la playa', value: 'A 2 minutos en carrito de golf' },
+                        { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
+                    ]
+                },
+                {
+                    id: '2',
+                    title: 'Gold Reef Village',
+                    mainImage: 'https://i.imgur.com/KpxAnux.jpeg',
+                    description: 'CONDO-HOTEL con un diseño arquitectónico de vanguardia, diseñado en forma de "U" y rodeado de vegetación tropical exuberante y playas de arena blanca.',
+                    videoSrc: 'https://www.youtube.com/embed/BHhA5x4GSAE',
+                    brochureLink: 'https://drive.google.com/file/d/15AcxoEjqk-wQ_PJfolQTW4NjYVGnyCSI/view?usp=drive_link',
+                    fichaTecnica: [
+                        { label: 'Ubicación', value: 'Villas Bávaro, Cortecito', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3592.962780626781!2d-68.4250833!3d18.6642778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDM5JzUxLjQiTiA2OMKwMjUnMzAuMyJX!5e1!3m2!1ses!2sus!4v1756398852133!5m2!1ses!2sus' },
+                        { label: 'Tipo de Propiedad', value: 'Apartamentos de 2 hab.' },
+                        { label: 'Transporte a la playa', value: 'A 5 minutos en carrito de golf' },
+                        { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
+                    ]
+                },
+                {
+                    id: '3',
+                    title: 'Gold Reef City',
+                    mainImage: 'https://i.imgur.com/PlT4kxZ.jpeg',
+                    description: 'Un innovador proyecto de 379 unidades que incluye villas, townhouses y apartamentos, con una plaza comercial y amenidades de primer nivel.',
+                    videoSrc: 'https://www.youtube.com/embed/O4S5kjwokC4',
+                    brochureLink: 'https://drive.google.com/file/d/1zqo870ouIofE0DMgFwmHoroGXYvV3d79/view?usp=drive_link',
+                    fichaTecnica: [
+                        { label: 'Ubicación', value: 'Bávaro, Punta Cana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3592.770330578363!2d-68.4553056!3d18.673361099999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDQwJzI0LjEiTiA2OMKwMjcnMTkuMSJX!5e1!3m2!1ses!2sus!4v1756400856840!5m2!1ses!2sus' },
+                        { label: 'Tipo de Propiedad', value: 'Villas, Townhouses, Apartamentos' },
+                        { label: 'Transporte a la playa', value: '8-10min en minibus' },
+                        { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
+                    ]
+                },
+                {
+                    id: '4',
+                    title: 'Gold Reef Terraform',
+                    mainImage: 'https://i.imgur.com/5iyBzCh.jpeg',
+                    description: 'Complejo de 48 apartamentos de 2 habitaciones, ubicado a solo 8 minutos del Aeropuerto Internacional de Punta Cana.',
+                    videoSrc: 'https://www.youtube.com/embed/P5iOJAuWq6A',
+                    brochureLink: 'https://drive.google.com/file/d/1E69VPMJNvMt726SxnUQU5cibOs7YRet7/view?usp=drive_link',
+                    fichaTecnica: [
+                        { label: 'Ubicación', value: 'Punta Cana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3594.4287883098104!2d-68.3973333!3d18.5949444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDM1JzQxLjgiTiA2OMKwMjMnNTAuNCJX!5e1!3m2!1ses!2sus!4v1756401931023!5m2!1ses!2sus' },
+                        { label: 'Tipo de Propiedad', value: 'Apartamentos de 2 hab, 2 baños' },
+                        { label: 'Transporte', value: '10 min en mini bus' },
+                        { label: 'Terminaciones', value: 'Porcelanato, granito, roble' }
+                    ]
+                },
+                {
+                    id: '5',
+                    title: 'Gold Reef Playa Nueva Romana',
+                    views: [
+                        {
+                            id: 'apartamentos-5',
+                            name: 'Apartamentos',
+                            mainImage: 'https://i.imgur.com/lcELtwB.jpeg',
+                            description: 'Exclusivo proyecto de 56 apartamentos de lujo dentro del macro-complejo Playa Nueva Romana, con acceso a campo de golf PGA y hotel 5 estrellas.',
+                            videoSrc: 'https://www.youtube.com/embed/SLDCjxf43uw',
+                            brochureLink: 'https://drive.google.com/file/d/1P9TJHorDjmusIhDg0Kqb3zCPe-A17jQs/view?usp=drive_link',
+                            fichaTecnica: [
+                                { label: 'Ubicación', value: 'Playa Nueva Romana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3597.6516401149274!2d-69.19344439999999!3d18.441638899999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDI2JzI5LjkiTiA2OcKwMTEnMzYuNCJX!5e1!3m2!1ses!2sus!4v1756402174542!5m2!1ses!2sus' },
+                                { label: 'Tipo de Propiedad', value: 'Apartamentos (1 hab + estudio)' },
+                                { label: 'Transporte a la playa', value: 'A 2 minutos' },
+                                { label: 'Terminaciones', value: 'Porcelanato Europeo, Silestone' }
+                            ]
+                        },
+                        {
+                            id: 'villas-5',
+                            name: 'Villas',
+                            mainImage: 'https://i.imgur.com/UUB3hkK.jpeg',
+                            description: "Villas de lujo con vista al campo de golf PGA Ocean's 4, ubicadas a pocos metros del Beach Club y del Mar Caribe.",
+                            videoSrc: 'https://www.youtube.com/embed/SLDCjxf43uw',
+                            brochureLink: 'https://drive.google.com/file/d/1H-jOOCDXfNvcEOiKa5Lr95B0KyK22vcb/view?usp=drive_link',
+                            fichaTecnica: [
+                                { label: 'Ubicación', value: 'Playa Nueva Romana', mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3597.6375357361644!2d-69.1847031!3d18.4423125!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eaf591f5092e4e3%3A0x65f5e497731bc307!2sGold%20Reef%20Villas!5e1!3m2!1ses-419!2sus!4v1756402953998!5m2!1ses-419!2sus' },
+                                { label: 'Tipo de Propiedad', value: 'Villas de 3 dormitorios' },
+                                { label: 'Superficie', value: '226 m² const. / Solar 448 m²' },
+                                { label: 'Terminaciones', value: 'Porcelanato, Silestone, Concreto' }
+                            ]
+                        }
+                    ]
+                }
+            ];
+
+            const modalData = {
+                '1': {
+                    title: 'Gold Reef I (Detalles)',
+                    content: `
+                        <div>
+                            <div class="border-b border-neutral-700 mb-6">
+                                <nav class="-mb-px flex space-x-6 overflow-x-auto">
+                                    <button class="tab-btn active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="caracteristicas">Características</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="inversion">Plan de Inversión</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="galeria">Galería</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad-1">Disponibilidad (GRI)</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad-2">Disponibilidad (GRII)</button>
+                                </nav>
+                            </div>
+                            <div>
+                                <div id="caracteristicas" class="tab-content active space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="map-pin" class="h-5 w-5 mr-3"></i>Ubicación</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">A 2 minutos de Playa Bávaro (con traslado en carrito de golf), a 3 minutos del Hospital IMG y a 5 minutos de Downtown Punta Cana. Cerca del campo de golf Cocotal, con descuentos para inversionistas.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="gem" class="h-5 w-5 mr-3"></i>Amenidades</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Múltiples canchas, centro comercial, acceso y traslado a playa privada, gimnasio, ascensores, piscina, seguridad 24 horas y estacionamientos semisubterráneos.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Apartamentos</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">2 habitaciones, 2 baños. Áreas netas de construcción desde 89 m² hasta 118 m². Estacionamiento incluido (desde 18 m²). Patio o terraza desde 12 m².</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="star" class="h-5 w-5 mr-3"></i>Terminaciones</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Pisos de porcelanato, topes de granito y puertas de madera de roble de alta calidad.</p>
+                                    </div>
+                                </div>
+                                <div id="inversion" class="tab-content">
+                                   <div class="space-y-6">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">1</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Reserva</h5>
+                                                <p class="text-neutral-300">Asegura tu unidad con solo <span class="accent-color font-semibold">USD$2,000.00</span>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">2</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Firma de Contrato</h5>
+                                                <p class="text-neutral-300">Completa el <span class="accent-color font-semibold">50%</span> en los 15 días posteriores a la reserva para la firma.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">3</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Pago Final</h5>
+                                                <p class="text-neutral-300">El <span class="accent-color font-semibold">50%</span> restante se financia o se paga contra entrega de la propiedad.</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center mr-4">
+                                                <i data-lucide="file-text" class="accent-color h-8 w-8"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Costos Adicionales</h5>
+                                                <p class="text-neutral-300">El costo de notarización del contrato de compraventa es de <span class="accent-color font-semibold">USD$60.00</span>.</p>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                                <div id="galeria" class="tab-content">
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <img src="https://i.imgur.com/1KgH2AN.jpeg" alt="Salón" class="gallery-item object-cover w-full h-full rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                        <img src="https://i.imgur.com/SZsIj11.jpeg" alt="Cocina" class="gallery-item object-cover w-full h-full rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                        <img src="https://i.imgur.com/5pZsh3i.jpeg" alt="Habitación Principal" class="gallery-item object-cover w-full h-full rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                        <img src="https://i.imgur.com/5hszAOo.jpeg" alt="Baño Principal" class="gallery-item object-cover w-full h-full rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                        <img src="https://i.imgur.com/hraPlrg.jpeg" alt="Habitación Secundaria" class="gallery-item object-cover w-full h-full rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                        <img src="https://i.imgur.com/vD5mg4N.jpeg" alt="Baño Secundario" class="gallery-item object-cover w-full h-full rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                    </div>
+                                </div>
+                                <div id="disponibilidad-1" class="tab-content">
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNHGfsCaE5KU5YS16w6wHc9qMOKGgPWlQR4Otnx1hNHjYr-2PsABbewEHAYePPuw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                                <div id="disponibilidad-2" class="tab-content">
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRJxv0rCamKRQKNsVhSEjrC6mu1wPFT2k4i49pQRdK1o98eOglWuUVFchrO2jxM3g/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                '2': {
+                    title: 'Gold Reef Village (Detalles)',
+                    content: `
+                        <div>
+                            <div class="border-b border-neutral-700 mb-6">
+                                <nav class="-mb-px flex space-x-6 overflow-x-auto">
+                                    <button class="tab-btn active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="caracteristicas">Características</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="apartamentos">Apartamentos</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="inversion">Plan de Inversión</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad">Disponibilidad</button>
+                                </nav>
+                            </div>
+                            <div>
+                                <div id="caracteristicas" class="tab-content active space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="building-2" class="h-5 w-5 mr-3"></i>Tipo de Desarrollo</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">CONDO-HOTEL con un diseño arquitectónico de vanguardia en forma de "U", abierto hacia un eje central con las principales actividades recreativas y sociales.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="map-pin" class="h-5 w-5 mr-3"></i>Ubicación</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Villas Bávaro, en la zona exclusiva de Cortecito-Bávaro, Punta Cana. Rodeado de hoteles cinco estrellas, vegetación tropical y playas de arena blanca.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="gem" class="h-5 w-5 mr-3"></i>Amenidades</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">8 Piscinas Lineales, Área de Yoga, Cancha de Pádel, Minigolf, Cine al Aire Libre, Club Infantil, Gym-Sauna, Club House, Coworking, Plaza Comercial y mucho más.</p>
+                                    </div>
+                                     <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="shield-check" class="h-5 w-5 mr-3"></i>Clasificación</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Proyecto Turístico Clasificado por CONFOTUR.</p>
+                                    </div>
+                                </div>
+                                 <div id="apartamentos" class="tab-content space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Primer Nivel</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1"><b>Área:</b> 70.98 m² + patio y Picuzzi. <b>Total aprox:</b> hasta 108.13 m². <b>Extras:</b> Acceso directo a piscina (Swim Up).</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Segundo Nivel</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1"><b>Área:</b> 70.98 m². <b>Total aprox:</b> 82.98 m². <b>Extras:</b> Balcón estilo francés con vistas privilegiadas.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Tercer Nivel (Penthouse)</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1"><b>Área:</b> 76.46 m² + Roof Top (61.85 m²). <b>Total aprox:</b> 169.46 m². <b>Extras:</b> Picuzzi, BBQ, ½ baño y vistas panorámicas.</p>
+                                    </div>
+                                </div>
+                                <div id="inversion" class="tab-content">
+                                   <div class="space-y-6">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">1</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Reserva</h5>
+                                                <p class="text-neutral-300">Asegura tu unidad con solo <span class="accent-color font-semibold">USD$2,500.00</span>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">2</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Primer Abono (20%)</h5>
+                                                <p class="text-neutral-300">Completa el 20% del valor en los 30 días posteriores a la reserva.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">3</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Segundo Abono (30%)</h5>
+                                                <p class="text-neutral-300">Paga el 30% en cómodas cuotas durante la construcción.</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">4</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Saldo Final (50%)</h5>
+                                                <p class="text-neutral-300">El 50% restante se financia o se paga contra entrega de la propiedad.</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center mr-4">
+                                                <i data-lucide="file-text" class="accent-color h-8 w-8"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Costos Adicionales</h5>
+                                                <p class="text-neutral-300">El costo de notarización del contrato de compraventa es de <span class="accent-color font-semibold">USD$60.00</span>.</p>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                                 <div id="disponibilidad" class="tab-content">
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRpY4uG2WSXHmNDxMbrSoFxgsNSeRYLnkjUJW5KptzxesXJIp9GBdqg8ngpJN2mfw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                 '3': {
+                    title: 'Gold Reef City (Detalles)',
+                    content: `
+                        <div>
+                            <div class="border-b border-neutral-700 mb-6">
+                                <nav class="-mb-px flex space-x-6 overflow-x-auto">
+                                    <button class="tab-btn active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="caracteristicas">Características</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="unidades">Tipos de Unidades</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="inversion">Plan de Inversión</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad-apartamentos">Disponibilidad (Aptos)</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad-villas">Disponibilidad (Villas)</button>
+                                </nav>
+                            </div>
+                            <div>
+                                <div id="caracteristicas" class="tab-content active space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="gem" class="h-5 w-5 mr-3"></i>Amenidades del Proyecto</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Plaza Comercial, Lobby con coworking y gimnasio, 3 piscinas de estilo natural, 1 piscina olímpica, Casa Club, área de juegos para niños, canchas de voleibol y pádel, y ciclo vía.</p>
+                                    </div>
+                                     <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="shield-check" class="h-5 w-5 mr-3"></i>Clasificación</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Proyecto Turístico Clasificado por CONFOTUR.</p>
+                                    </div>
+                                </div>
+                                 <div id="unidades" class="tab-content space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Villas (2 y 3 dormitorios)</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Desde 85.83 m² construidos en terrenos de hasta 272 m². Incluyen terraza, jacuzzi, BBQ y marquesina doble.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="building" class="h-5 w-5 mr-3"></i>Townhouses (2 dormitorios)</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Unidades de dos niveles en terrenos de hasta 136 m². Cuentan con marquesina doble y patios tipo U con jacuzzi y BBQ.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="building-2" class="h-5 w-5 mr-3"></i>Apartamentos (1 y 2 dormitorios)</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Unidades desde 58.21 m² (1 dorm.) hasta más de 92.93 m² (2 dorm.). Todos con balcón o terraza privada, en edificios con ascensores.</p>
+                                    </div>
+                                </div>
+                                <div id="inversion" class="tab-content">
+                                   <div class="space-y-6">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">1</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Reserva</h5>
+                                                <p class="text-neutral-300">Asegura tu unidad con solo <span class="accent-color font-semibold">USD$2,500.00</span>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">2</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Abono Inicial (20%)</h5>
+                                                <p class="text-neutral-300">Paga un 10% a los 15 días y otro 10% a los 60 días.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">3</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Durante Construcción (30%)</h5>
+                                                <p class="text-neutral-300">Paga el 30% en cómodas cuotas mensuales durante 36 meses.</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center mr-4">
+                                                <i data-lucide="file-text" class="accent-color h-8 w-8"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Costos Adicionales</h5>
+                                                <p class="text-neutral-300">El costo de notarización del contrato de compraventa es de <span class="accent-color font-semibold">USD$60.00</span>.</p>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                                <div id="disponibilidad-apartamentos" class="tab-content">
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSch65qTM-O0T1ZvlV4AAH8aqtcOtuxZttr12I8M5b1dYfQpHqfEh4A1QfBRFI_wQ/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                                <div id="disponibilidad-villas" class="tab-content">
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTkwF7tmdgBkwi6ACxbMqI0x-JxYi8bcuuodPP5LUo3I28d1X1lqXWauvK_8r79Kw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                '4': {
+                    title: 'Gold Reef Terraform (Detalles)',
+                    content: `
+                        <div>
+                            <div class="border-b border-neutral-700 mb-6">
+                                <nav class="-mb-px flex space-x-6 overflow-x-auto">
+                                    <button class="tab-btn active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="caracteristicas">Características</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="apartamentos">Apartamentos</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="inversion">Plan de Inversión</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad">Disponibilidad</button>
+                                </nav>
+                            </div>
+                            <div>
+                                <div id="caracteristicas" class="tab-content active space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="map-pin" class="h-5 w-5 mr-3"></i>Ubicación</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">A solo 8 minutos del Aeropuerto Internacional de Punta Cana, justo detrás de Almacenes Unidos.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="building-2" class="h-5 w-5 mr-3"></i>Descripción del Proyecto</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Consta de 4 edificios de tres niveles cada uno, con un total de 48 apartamentos (12 por edificio).</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="gem" class="h-5 w-5 mr-3"></i>Amenidades</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">2 piscinas para adultos, 2 piscinas para niños, 2 áreas de juegos y un gimnasio súper equipado.</p>
+                                    </div>
+                                     <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="star" class="h-5 w-5 mr-3"></i>Acabados</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Pisos de Porcelanato, topes de Granito y madera de Roble.</p>
+                                    </div>
+                                </div>
+                                 <div id="apartamentos" class="tab-content space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Características Generales</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1"><b>Área:</b> 75 m² netos. <b>Distribución:</b> 2 habitaciones, 2 baños, sala, balcón, comedor, cocina, área de lavado. <b>Incluye:</b> 1 parqueo.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Primer Nivel</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Cuentan con jardín, espacio para terraza y pre-instalación de picuzzi.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Tercer Nivel (Penthouse)</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Cuentan con espacio para una amplia terraza y pre-instalación de picuzzi.</p>
+                                    </div>
+                                </div>
+                                <div id="inversion" class="tab-content">
+                                   <div class="space-y-6">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">1</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Reserva</h5>
+                                                <p class="text-neutral-300">Asegura tu unidad con solo <span class="accent-color font-semibold">USD$2,000.00</span>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">2</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Abono Inicial (20%)</h5>
+                                                <p class="text-neutral-300">Completa un 10% en 15 días y otro 10% en 60 días.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">3</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Durante Construcción (30%)</h5>
+                                                <p class="text-neutral-300">Paga el 30% en cuotas hasta junio de 2025 (Bloques A y B) o diciembre de 2025 (Bloques C y D).</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">4</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Saldo Final (50%)</h5>
+                                                <p class="text-neutral-300">El 50% restante se financia o se paga contra entrega.</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center mr-4">
+                                                <i data-lucide="file-text" class="accent-color h-8 w-8"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Costos Adicionales</h5>
+                                                <p class="text-neutral-300">El costo de notarización del contrato de compraventa es de <span class="accent-color font-semibold">USD$60.00</span>.</p>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                                 <div id="disponibilidad" class="tab-content">
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSiZIYYbXXURQxOFOdf2ijJlm7fzRQbWzZzm6BqrmvtgujySHKBgep-9fTY4VY8fw/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                '5': {
+                    title: 'Gold Reef Playa Nueva Romana (Apartamentos)',
+                    content: `
+                        <div>
+                            <div class="border-b border-neutral-700 mb-6">
+                                <nav class="-mb-px flex space-x-6 overflow-x-auto">
+                                    <button class="tab-btn active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="caracteristicas">Características</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="apartamentos">Apartamentos</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="inversion">Plan de Inversión</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad">Disponibilidad</button>
+                                </nav>
+                            </div>
+                            <div>
+                                <div id="caracteristicas" class="tab-content active space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="map-pin" class="h-5 w-5 mr-3"></i>Ubicación</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Playa Nueva Romana, La Romana. A 2 minutos de la playa y 30 minutos del Aeropuerto Internacional de La Romana.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="gem" class="h-5 w-5 mr-3"></i>Amenidades del Complejo</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Acceso a Hotel 5 estrellas Grand Bahía Príncipe, campo de golf PGA, club de playa, casino, spa, gimnasio, restaurantes y seguridad 24 horas.</p>
+                                    </div>
+                                     <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="shield-check" class="h-5 w-5 mr-3"></i>Beneficios (CONFOTUR)</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Exención del 1% de impuesto al patrimonio (IPI) por 15 años y exención del 3% de impuesto de transferencia de título.</p>
+                                    </div>
+                                </div>
+                                 <div id="apartamentos" class="tab-content space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Características Generales</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1"><b>Tipología:</b> 1 habitación + estudio. <b>Tamaño:</b> Desde 79 hasta 88 m². <b>Distribución:</b> Sala, comedor, cocina, 2 baños. <b>Incluye:</b> 1 parqueo y línea blanca (Nevera, extractor, aires acondicionados, intercom).</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="star" class="h-5 w-5 mr-3"></i>Terminaciones de Lujo</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Pisos de porcelanato rectificado europeo, revestimientos en cerámica europea y topes en silestone.</p>
+                                    </div>
+                                </div>
+                                <div id="inversion" class="tab-content">
+                                   <div class="space-y-6">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">1</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Reserva</h5>
+                                                <p class="text-neutral-300">Asegura tu unidad con solo <span class="accent-color font-semibold">USD$2,500.00</span>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">2</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Abono Inicial (20%)</h5>
+                                                <p class="text-neutral-300">Completa el 20% del total en 30 días.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">3</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Durante Construcción (30%)</h5>
+                                                <p class="text-neutral-300">Paga el 30% en cómodas cuotas.</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">4</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Saldo Final (50%)</h5>
+                                                <p class="text-neutral-300">El 50% restante se financia o se paga contra entrega.</p>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                                <div id="disponibilidad" class="tab-content">
+                                    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTEbS9fbfhp2xZjDtBnca-GWgeltAxrVtYTlybxB1-eHdgQmbxzicZUjx1YV4Xfig/pubhtml?widget=true&amp;headers=false" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                '5-villas': {
+                    title: 'Gold Reef Playa Nueva Romana (Villas)',
+                    content: `
+                        <div>
+                            <div class="border-b border-neutral-700 mb-6">
+                                <nav class="-mb-px flex space-x-6 overflow-x-auto">
+                                    <button class="tab-btn active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="caracteristicas">Características</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="villas">Villas</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="inversion">Plan de Inversión</button>
+                                    <button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg border-transparent" data-tab="disponibilidad">Disponibilidad</button>
+                                </nav>
+                            </div>
+                            <div>
+                                <div id="caracteristicas" class="tab-content active space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="map-pin" class="h-5 w-5 mr-3"></i>Ubicación</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Dentro del complejo inmobiliario Playa Nueva Romana, La Romana. A 3 minutos del Beach Club, del campo de golf PGA y de los hoteles 5 estrellas.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="gem" class="h-5 w-5 mr-3"></i>Amenidades del Complejo</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Golf PGA Ocean's 4, Casa Club, Playa Privada, 2 Hoteles 5 estrellas, Seguridad 24h, Beach Club con piscina infinity, restaurantes y más.</p>
+                                    </div>
+                                     <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="shield-check" class="h-5 w-5 mr-3"></i>Beneficios (CONFOTUR)</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Exención del 1% de impuesto al patrimonio (IPI) por 15 años y exención del 3% de impuesto de transferencia de título.</p>
+                                    </div>
+                                </div>
+                                 <div id="villas" class="tab-content space-y-5">
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="home" class="h-5 w-5 mr-3"></i>Características Generales</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1"><b>Solar:</b> Desde 448 m². <b>Construcción:</b> 226 m². <b>Distribución:</b> 3 Dormitorios, 3.5 Baños, Family Room, Sala, Comedor, Cocina, Área de Lavado, Cuarto de servicio, Marquesina para 3 vehículos.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="sun" class="h-5 w-5 mr-3"></i>Exteriores y Adicionales</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Patio trasero, Balcón, Terraza, Piscina, Jardín Interior y vista al campo de golf PGA Ocean's 4.</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-semibold accent-color flex items-center"><i data-lucide="star" class="h-5 w-5 mr-3"></i>Terminaciones y Equipamiento</h5>
+                                        <p class="text-neutral-300 pl-8 mt-1">Construcción en Block y Concreto. Interiores con techos en yeso, pisos de Porcelanato Europeo y topes de Silestone. Línea blanca incluida (nevera, estufa, 3 A/C, calentador, lavadora-secadora).</p>
+                                    </div>
+                                </div>
+                                <div id="inversion" class="tab-content">
+                                   <div class="space-y-6">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">1</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Reserva</h5>
+                                                <p class="text-neutral-300">Asegura tu unidad con solo <span class="accent-color font-semibold">US$5,000.00</span>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">2</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Firma de Contrato (15%)</h5>
+                                                <p class="text-neutral-300">Completa el 15% de la inversión inicial en 15 días.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">3</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Durante Construcción (35%)</h5>
+                                                <p class="text-neutral-300">Paga el 35% en cómodas cuotas hasta la fecha de entrega.</p>
+                                            </div>
+                                        </div>
+                                         <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 accent-border accent-color flex items-center justify-center font-bold text-xl mr-4">4</div>
+                                            <div>
+                                                <h5 class="font-semibold text-white text-lg">Contra Entrega (50%)</h5>
+                                                <p class="text-neutral-300">El 50% restante se financia o se paga al recibir la propiedad.</p>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                                <div id="disponibilidad" class="tab-content">
+                                    <iframe src="https://docs.google.com/document/d/e/2PACX-1vStCuQA1K4ces1QFQh8c6i81JTt04jSg4jlNvrb9YXeJj0O4B8J_t9OwWMzm7aYCg/pub?embedded=true" class="w-full h-[70vh] rounded-lg border border-neutral-700"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }
+            };
+
+            // --- SCRIPT ---
+            const renderSingleProjectView = (data, projectId) => {
+                return `
+                    <div class="text-center mb-8">
+                        ${!data.name ? `<h2 class="text-5xl font-serif font-bold accent-color tracking-tight">${data.title}</h2>` : ''}
+                    </div>
+                    <div class="mb-10 rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="${data.mainImage}" alt="Visual del Proyecto ${data.title}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="grid md:grid-cols-5 gap-10">
+                        <div class="md:col-span-2">
+                            <h3 class="text-2xl font-semibold text-white mb-3">Descripción General ${data.name ? `(${data.name})` : ''}</h3>
+                            <p class="text-neutral-300 font-light leading-relaxed">${data.description}</p>
+                            <div class="mt-6 flex flex-wrap gap-4">
+                                <button class="open-video-btn inline-flex items-center justify-center px-5 py-2.5 border border-neutral-600 hover:bg-neutral-800 text-white font-medium rounded-lg transition-colors" data-video-src="${data.videoSrc}">
+                                    <i data-lucide="play-circle" class="mr-2 h-5 w-5"></i> Ver Video
+                                </button>
+                                <button data-project-id="${projectId}" class="open-modal-btn inline-flex items-center justify-center px-5 py-2.5 border border-amber-700/50 bg-amber-900/20 hover:bg-amber-900/40 text-amber-300 font-medium rounded-lg transition-colors">
+                                    <i data-lucide="arrow-right" class="mr-2 h-5 w-5"></i> Ver más detalles
+                                </button>
+                                <button data-brochure-src="${data.brochureLink}" class="open-brochure-btn w-full inline-flex items-center justify-center px-5 py-2.5 border border-neutral-600 hover:bg-neutral-800 text-white font-medium rounded-lg transition-colors">
+                                    <i data-lucide="book-open" class="mr-2 h-5 w-5"></i> Brochure
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:col-span-3">
+                            <h3 class="text-2xl font-semibold text-white mb-4">Ficha Técnica</h3>
+                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                ${data.fichaTecnica.map(item => `
+                                    <div class="border-t border-neutral-700 pt-2">
+                                        <p class="text-sm text-neutral-400">${item.label}</p>
+                                        ${item.mapSrc ? `
+                                            <button class="open-map-btn text-base font-medium text-blue-400 hover:text-blue-300 transition-colors flex items-center text-left" data-map-src="${item.mapSrc}">
+                                                <i data-lucide="map-pin" class="h-4 w-4 mr-2"></i> ${item.value}
+                                            </button>
+                                        ` : `
+                                            <p class="text-base font-medium text-white">${item.value}</p>
+                                        `}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            const renderProjects = () => {
+                let html = '';
+                projects.forEach(project => {
+                    if (project.views) {
+                        html += `
+                            <section id="proyecto${project.id}" class="mb-24 pt-16 scroll-reveal">
+                                <div class="text-center mb-8">
+                                    <h2 class="text-5xl font-serif font-bold accent-color tracking-tight">${project.title}</h2>
+                                    <div class="mt-4 flex justify-center items-center gap-2">
+                                        ${project.views.map((view, index) => `
+                                            <button class="view-toggle-btn ${index === 0 ? 'active' : ''} px-4 py-2 rounded-lg" data-view="${view.id}">${view.name}</button>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                ${project.views.map((view, index) => `
+                                    <div id="${view.id}-view" style="${index > 0 ? 'display: none;' : ''}">
+                                        ${renderSingleProjectView(view, view.id.includes('villas') ? '5-villas' : '5')}
+                                    </div>
+                                `).join('')}
+                                <hr class="border-neutral-800 mt-24">
+                            </section>
+                        `;
+                    } else {
+                        html += `
+                            <section id="proyecto${project.id}" class="mb-24 pt-16 scroll-reveal">
+                                ${renderSingleProjectView(project, project.id)}
+                                <hr class="border-neutral-800 mt-24">
+                            </section>
+                        `;
+                    }
+                });
+                projectsContainer.innerHTML = html;
+            };
+
+            renderProjects();
+
+            // --- LÓGICA PARA EL MODAL DE DETALLES ---
+            const projectModal = document.getElementById('project-modal');
+            const projectBackdrop = projectModal.querySelector('.modal-backdrop');
+            const closeProjectModalBtn = document.getElementById('close-modal-btn');
+            const modalBody = document.getElementById('modal-body');
+
+            const openProjectModal = (projectId) => {
+                const project = modalData[projectId];
+                if (!project) {
+                    console.error('No se encontraron datos para el proyecto:', projectId);
+                    return;
+                }
+                document.getElementById('modal-title').textContent = project.title;
+                modalBody.innerHTML = project.content;
+                
+                projectModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+
+                const tabButtons = modalBody.querySelectorAll('.tab-btn');
+                const tabContents = modalBody.querySelectorAll('.tab-content');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        const tabId = button.dataset.tab;
+                        tabContents.forEach(content => {
+                            content.classList.toggle('active', content.id === tabId);
+                        });
+                    });
+                });
+
+                const galleryItems = modalBody.querySelectorAll('.gallery-item');
+                galleryItems.forEach((item, index) => {
+                    item.addEventListener('click', () => {
+                        const images = Array.from(galleryItems).map(img => img.src);
+                        openLightbox(images, index);
+                    });
+                });
+
+                lucide.createIcons();
+            };
+
+            const closeProjectModal = () => {
+                projectModal.style.display = 'none';
+                if (mapModal.style.display === 'none' && videoModal.style.display === 'none' && lightboxModal.style.display === 'none' && brochureModal.style.display === 'none') {
+                    document.body.style.overflow = '';
+                }
+            };
+            
+            // --- LÓGICA PARA MODALES GENÉRICOS (MAPA, VIDEO, LIGHTBOX, BROCHURE) ---
+            const mapModal = document.getElementById('map-modal');
+            const videoModal = document.getElementById('video-modal');
+            const lightboxModal = document.getElementById('lightbox-modal');
+            const brochureModal = document.getElementById('brochure-modal');
+
+            const setupModal = (modal, openBtnsQuery, closeBtn, openFn, closeFn) => {
+                const backdrop = modal.querySelector('.modal-backdrop');
+                document.body.addEventListener('click', (e) => {
+                    if (!openBtnsQuery) return;
+                    const openBtn = e.target.closest(openBtnsQuery);
+                    if (openBtn) {
+                        openFn(openBtn);
+                    }
+                });
+                
+                closeBtn.addEventListener('click', closeFn);
+                backdrop.addEventListener('click', closeFn);
+            };
+
+            // MAPA
+            const mapIframe = document.getElementById('map-iframe');
+            setupModal(mapModal, '.open-map-btn', document.getElementById('close-map-modal-btn'), 
+                (btn) => {
+                    if (btn.dataset.mapSrc) {
+                        mapIframe.src = btn.dataset.mapSrc;
+                        mapModal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    }
+                },
+                () => {
+                    mapIframe.src = '';
+                    mapModal.style.display = 'none';
+                    if (projectModal.style.display === 'none') document.body.style.overflow = '';
+                }
+            );
+
+            // VIDEO
+            const videoIframe = document.getElementById('video-iframe');
+            setupModal(videoModal, '.open-video-btn', document.getElementById('close-video-modal-btn'),
+                (btn) => {
+                    if (btn.dataset.videoSrc) {
+                        videoIframe.src = btn.dataset.videoSrc + "?autoplay=1";
+                        videoModal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    }
+                },
+                () => {
+                    videoIframe.src = '';
+                    videoModal.style.display = 'none';
+                    if (projectModal.style.display === 'none') document.body.style.overflow = '';
+                }
+            );
+            
+            // BROCHURE
+            const brochureIframe = document.getElementById('brochure-iframe');
+            setupModal(brochureModal, '.open-brochure-btn', document.getElementById('close-brochure-modal-btn'),
+                (btn) => {
+                    let brochureSrc = btn.dataset.brochureSrc;
+                    if (brochureSrc && brochureSrc.includes('drive.google.com')) {
+                        brochureSrc = brochureSrc.replace('/view?usp=drive_link', '/preview');
+                    }
+                    if (brochureSrc) {
+                        brochureIframe.src = brochureSrc;
+                        brochureModal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    }
+                },
+                () => {
+                    brochureIframe.src = '';
+                    brochureModal.style.display = 'none';
+                    if (projectModal.style.display === 'none') document.body.style.overflow = '';
+                }
+            );
+
+            // LIGHTBOX
+            const lightboxImg = document.getElementById('lightbox-img');
+            const prevLightboxBtn = document.getElementById('prev-lightbox-btn');
+            const nextLightboxBtn = document.getElementById('next-lightbox-btn');
+            let currentGalleryImages = [];
+            let currentImageIndex = 0;
+
+            const showLightboxImage = (index) => {
+                if (index < 0 || index >= currentGalleryImages.length) return;
+                currentImageIndex = index;
+                lightboxImg.src = currentGalleryImages[currentImageIndex];
+                prevLightboxBtn.style.display = currentImageIndex === 0 ? 'none' : 'block';
+                nextLightboxBtn.style.display = currentImageIndex === currentGalleryImages.length - 1 ? 'none' : 'block';
+            };
+
+            const openLightbox = (images, index) => {
+                currentGalleryImages = images;
+                lightboxModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                showLightboxImage(index);
+            };
+            
+            const closeLightbox = () => {
+                lightboxModal.style.display = 'none';
+                if (projectModal.style.display === 'none') document.body.style.overflow = '';
+            };
+            
+            setupModal(lightboxModal, null, document.getElementById('close-lightbox-btn'), ()=>{}, closeLightbox);
+            prevLightboxBtn.addEventListener('click', () => showLightboxImage(currentImageIndex - 1));
+            nextLightboxBtn.addEventListener('click', () => showLightboxImage(currentImageIndex + 1));
+
+            let touchstartX = 0;
+            let touchendX = 0;
+            lightboxImg.addEventListener('touchstart', e => touchstartX = e.changedTouches[0].screenX);
+            lightboxImg.addEventListener('touchend', e => {
+                touchendX = e.changedTouches[0].screenX;
+                if (touchendX < touchstartX) nextLightboxBtn.click();
+                if (touchendX > touchstartX) prevLightboxBtn.click();
+            });
+            
+            // --- LÓGICA GENERAL ---
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (projectModal.style.display !== 'none') closeProjectModal();
+                    if (mapModal.style.display !== 'none') mapModal.querySelector('#close-map-modal-btn').click();
+                    if (videoModal.style.display !== 'none') videoModal.querySelector('#close-video-modal-btn').click();
+                    if (brochureModal.style.display !== 'none') brochureModal.querySelector('#close-brochure-modal-btn').click();
+                    if (lightboxModal.style.display !== 'none') closeLightbox();
+                } else if (e.key === 'ArrowLeft' && lightboxModal.style.display !== 'none') {
+                    prevLightboxBtn.click();
+                } else if (e.key === 'ArrowRight' && lightboxModal.style.display !== 'none') {
+                    nextLightboxBtn.click();
+                }
+            });
+
+            document.body.addEventListener('click', (e) => {
+                const openModalBtn = e.target.closest('.open-modal-btn');
+                if (openModalBtn) {
+                    openProjectModal(openModalBtn.dataset.projectId);
+                }
+                
+                const viewToggleBtn = e.target.closest('.view-toggle-btn');
+                if (viewToggleBtn) {
+                    const view = viewToggleBtn.dataset.view;
+                    const projectSection = viewToggleBtn.closest('section');
+                    
+                    projectSection.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+                    viewToggleBtn.classList.add('active');
+
+                    projectSection.querySelectorAll('[id$="-view"]').forEach(v => {
+                        v.style.display = v.id.startsWith(view) ? 'block' : 'none';
+                    });
+                }
+            });
+
+            closeProjectModalBtn.addEventListener('click', closeProjectModal);
+            projectBackdrop.addEventListener('click', closeProjectModal);
+            
+            // Animaciones de scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+
+            lucide.createIcons();
+        });
+    </script>
+
+</body>
+</html>
